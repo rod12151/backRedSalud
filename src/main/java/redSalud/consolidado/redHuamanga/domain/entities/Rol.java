@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import redSalud.consolidado.redHuamanga.util.enums.Role;
 
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Rol {
 
     @Column(nullable = false, unique = true)
     @Enumerated(EnumType.STRING)
-    private String nombre;
+    private Role nombre;
 
 
     @ManyToMany(mappedBy = "roles")
