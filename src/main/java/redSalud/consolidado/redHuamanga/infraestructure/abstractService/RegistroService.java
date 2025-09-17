@@ -11,5 +11,6 @@ public interface RegistroService {
     List<Registro> getByMicroRed(String microRed);
     Registro save(Registro registro);
     List<Registro> saveAll(List<Registro> registros);
+
     graficoResponse getGraficoCursoVida(String red, Integer anio, String mes, String microRed, String ipress);
 }

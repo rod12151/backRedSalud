@@ -62,9 +62,10 @@ public class DataControllers {
 
         if (mes != null && mes.isBlank()) mes = null;
         if (Objects.equals(microRed,"TODOS")) microRed = null;
+        if (Objects.equals((microRed),"NO MICRORED")) microRed="NO PERTENECE A NINGUNA MICRORED";
         if (Objects.equals(ipress,"TODOS")) ipress = null;
         Integer anioInt = null;
-        if (anio != null && !anio.equalsIgnoreCase("todos") && !anio.isBlank()) {
+        if (anio != null && !anio.equalsIgnoreCase("TODOS") && !anio.isBlank()) {
             anioInt = Integer.valueOf(anio);
         }
 
