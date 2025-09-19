@@ -1,7 +1,6 @@
 package redSalud.consolidado.redHuamanga.infraestructure.serviceImpl;
 
 import lombok.AllArgsConstructor;
-import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -63,7 +62,6 @@ public class ExcelServiceServiceImpl implements ExcelService {
     public byte[] generarExcel(String red, String anio, String mes, String microRed, String ipress) throws Exception {
         Workbook workbook = new XSSFWorkbook();
         String redAux="HUAMANGA";
-        String anioAux=anio;
         String mesAux = mes;
         String microRedAux =microRed;
         String ipressAux =ipress;
@@ -82,15 +80,25 @@ public class ExcelServiceServiceImpl implements ExcelService {
         List<Integer> atendidos_eess=graficoResponse.getAtendidosEess();
         List<Integer> atendidos_Serv=graficoResponse.getAtendidosServ();
         List<Integer> atenciones_Serv=graficoResponse.getAtencionesServ();
+
+
         CellStyle headerStyle = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
+        font.setFontHeightInPoints((short)12);
+        font.setFontName("Arial");
+        font.setItalic(true);
         headerStyle.setFont(font);
+
         Sheet sheet = workbook.createSheet("reporte");
 
         Row redRow=sheet.createRow(2);
-        redRow.createCell(0).setCellValue("RED DE SALUD");
+        Cell redRowCell1=redRow.createCell(0);
+        redRowCell1.setCellValue("RED DE SALUD");
+        redRowCell1.setCellStyle(headerStyle);
+
         redRow.createCell(1).setCellValue(redAux);
+
         Row microRedRow=sheet.createRow(3);
         microRedRow.createCell(0).setCellValue("MICRORED");
         microRedRow.createCell(1).setCellValue(microRedAux);
@@ -99,7 +107,7 @@ public class ExcelServiceServiceImpl implements ExcelService {
         ipressRow.createCell(1).setCellValue(ipressAux);
         Row anioRow=sheet.createRow(5);
         anioRow.createCell(0).setCellValue("AÑO");
-        anioRow.createCell(1).setCellValue(anioAux);
+        anioRow.createCell(1).setCellValue(anio);
         Row mesRow=sheet.createRow(6);
         mesRow.createCell(0).setCellValue("MES");
         mesRow.createCell(1).setCellValue(mesAux);
@@ -107,28 +115,15 @@ public class ExcelServiceServiceImpl implements ExcelService {
         Row headerRow=sheet.createRow(8);
         headerRow.createCell(0).setCellValue("curso_vida");
         headerRow.createCell(1).setCellValue("atendidos_eess");
-        headerRow.createCell(2).setCellValue("atenciones_serv");
-        headerRow.createCell(3).setCellValue("atendidos_serv");
+        headerRow.createCell(2).setCellValue("atendidos_serv");
+        headerRow.createCell(3).setCellValue("atenciones_serv");
         for(int i =0;i<labels.size();i++){
             Row row = sheet.createRow(9+i);
-            row.createCell(0).setCellValue((String)labels.get(i));
-            row.createCell(1).setCellValue((Integer)atendidos_eess.get(i) );
-            row.createCell(2).setCellValue((Integer)atenciones_Serv.get(i));
-            row.createCell(3).setCellValue((Integer)atendidos_Serv.get(i));
+            row.createCell(0).setCellValue(labels.get(i));
+            row.createCell(1).setCellValue(atendidos_eess.get(i) );
+            row.createCell(2).setCellValue(atenciones_Serv.get(i));
+            row.createCell(3).setCellValue(atendidos_Serv.get(i));
         }
-
-        //estilos
-        CellStyle style =workbook.createCellStyle();
-        style.setAlignment(HorizontalAlignment.CENTER); // Alineación horizontal
-        style.setVerticalAlignment(VerticalAlignment.CENTER); // Alineación vertical
-        style.setIndention((short) 2); // Sangría dentro de la celda
-
-        style.setBorderTop(BorderStyle.THIN);
-        style.setBorderBottom(BorderStyle.THIN);
-        style.setBorderLeft(BorderStyle.THIN);
-        style.setBorderRight(BorderStyle.THIN);
-
-
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         workbook.write(out);
         workbook.close();
