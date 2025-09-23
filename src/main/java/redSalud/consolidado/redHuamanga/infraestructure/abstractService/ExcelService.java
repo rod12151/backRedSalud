@@ -7,7 +7,7 @@ import redSalud.consolidado.redHuamanga.domain.entities.Registro;
 import java.util.List;
 
 public interface ExcelService {
-    List<Registro> parseExcel(MultipartFile file);
+    void parseExcel(MultipartFile file);
 
     byte[] generarExcel(String red, String anio, String mes, String microRed, String ipress)throws Exception;
 }

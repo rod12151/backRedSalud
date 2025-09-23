@@ -1,6 +1,7 @@
 package redSalud.consolidado.redHuamanga.domain.entities;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Table(name = "registros")
 @Getter
 @Setter
+@Builder
 public class Registro {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

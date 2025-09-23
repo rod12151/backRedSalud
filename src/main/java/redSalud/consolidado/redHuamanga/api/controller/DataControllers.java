@@ -1,6 +1,8 @@
 package redSalud.consolidado.redHuamanga.api.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
@@ -46,10 +48,18 @@ public class DataControllers {
     public List<Registro> saveAll(@RequestBody List<Registro> registros) {
         return registroService.saveAll(registros);
     }
+
     @PostMapping("/upload")
-    public List<Registro> uploadExcel(@RequestParam("file") MultipartFile file) {
-        List<Registro> registros = excelService.parseExcel(file);
-        return registroService.saveAll(registros);
+    public ResponseEntity<String> uploadExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            excelService.parseExcel(file);
+            return ResponseEntity.ok("Archivo procesado y registros guardados correctamente ✅");
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al procesar el archivo: " + e.getMessage());
+        }
+
     }
     @GetMapping("/grafico")
     public graficoResponse getGrafico(

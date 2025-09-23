@@ -1,12 +1,17 @@
 package redSalud.consolidado.redHuamanga.infraestructure.serviceImpl;
 
 import lombok.AllArgsConstructor;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
+import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
 import redSalud.consolidado.redHuamanga.domain.entities.Registro;
+import redSalud.consolidado.redHuamanga.domain.repositories.RegistroRepository;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.ExcelService;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.RegistroService;
 
@@ -21,41 +26,53 @@ import java.util.Objects;
 @Service
 public class ExcelServiceServiceImpl implements ExcelService {
     RegistroService registroService;
+    RegistroRepository registroRepository;
+    private static final int BATCH_SIZE = 500;
     @Override
-    public List<Registro> parseExcel(MultipartFile file) {
-        List<Registro> registros = new ArrayList<>();
+    public void parseExcel(MultipartFile file) {
 
         try (InputStream is = file.getInputStream();
              Workbook workbook = new XSSFWorkbook(is)) {
-
             Sheet sheet = workbook.getSheetAt(0); // primera hoja
-            Iterator<Row> rows = sheet.iterator();
+            var rows = sheet.iterator();
 
             if (rows.hasNext()) rows.next(); // saltar cabecera
+            List<Registro> buffer = new ArrayList<>(BATCH_SIZE);
 
             while (rows.hasNext()) {
                 Row row = rows.next();
-                Registro registro = new Registro();
-
-                registro.setRed(getCellString(row, 0));
-                registro.setAnio((int) getCellNumeric(row, 1));
-                registro.setMes(getCellString(row, 2));
-                registro.setMicroRed(getCellString(row, 3));
-                registro.setIpress(getCellString(row, 4));
-                registro.setCursoVida(getCellString(row, 5));
-                registro.setAtendidosEess((int) getCellNumeric(row, 6));
-                registro.setAtendidosServ((int) getCellNumeric(row, 7));
-                registro.setAtencionesServ((int) getCellNumeric(row, 8));
-                registro.setApp((int) getCellNumeric(row, 9));
-                registro.setAa((int) getCellNumeric(row, 10));
-
-                registros.add(registro);
+                Registro registro = Registro.builder()
+                                .red(getCellString(row, 0))
+                        .anio((int) getCellNumeric(row, 1))
+                        .mes(getCellString(row, 2))
+                        .microRed(getCellString(row, 3))
+                        .ipress(getCellString(row, 4))
+                        .cursoVida(getCellString(row, 5))
+                        .atendidosEess((int) getCellNumeric(row, 6))
+                        .atendidosServ((int) getCellNumeric(row, 7))
+                        .atencionesServ((int) getCellNumeric(row, 8))
+                        .app((int) getCellNumeric(row, 9))
+                        .aa((int) getCellNumeric(row, 10))
+                        .build();
+                buffer.add(registro);
+                if (buffer.size() >= BATCH_SIZE) {
+                    registroRepository.saveAll(buffer);
+                    registroRepository.flush(); // asegura inserción inmediata
+                    buffer.clear();
+                }
             }
+
+            if (!buffer.isEmpty()) {
+                registroRepository.saveAll(buffer);
+                registroRepository.flush();
+            }
+
+
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar el Excel: " + e.getMessage());
         }
 
-        return registros;
+
     }
 
     @Override
@@ -131,14 +148,13 @@ public class ExcelServiceServiceImpl implements ExcelService {
 
     }
 
-
     private String getCellString(Row row, int index) {
-        Cell cell = row.getCell(index);
+        Cell cell = row.getCell(index, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
         return cell != null ? cell.toString().trim() : null;
     }
 
     private double getCellNumeric(Row row, int index) {
-        Cell cell = row.getCell(index);
+        Cell cell = row.getCell(index, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
         if (cell == null) return 0;
         if (cell.getCellType() == CellType.NUMERIC) return cell.getNumericCellValue();
         try {
@@ -147,4 +163,5 @@ public class ExcelServiceServiceImpl implements ExcelService {
             return 0;
         }
     }
+
 }
