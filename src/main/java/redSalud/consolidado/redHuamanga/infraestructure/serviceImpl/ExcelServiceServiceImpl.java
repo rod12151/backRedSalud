@@ -33,10 +33,37 @@ public class ExcelServiceServiceImpl implements ExcelService {
 
         try (InputStream is = file.getInputStream();
              Workbook workbook = new XSSFWorkbook(is)) {
-            Sheet sheet = workbook.getSheetAt(0); // primera hoja
-            var rows = sheet.iterator();
 
-            if (rows.hasNext()) rows.next(); // saltar cabecera
+            Sheet sheet = workbook.getSheetAt(0); // primera hoja
+            Iterator<Row>  rows = sheet.iterator();
+
+            if(!rows.hasNext()){
+                throw new IllegalArgumentException("archivo exel vacio");
+            }
+
+            //cabeceras esperadas
+            List<String> cabecera = List.of("RED","AÑOS","MES","MicroRed","Ipress","CursoVida","Atendidos_EESS","Atendidos_serv","Atenciones_serv","App","AA");
+
+            //leer cabecera
+            Row cabeceraExcel = rows.next();
+            List<String> cabeceraAux =new ArrayList<>();
+
+            for(int i = 0;i<cabecera.size();i++){
+                Cell cell = cabeceraExcel.getCell(i);
+                if(cell == null){
+                    throw new IllegalArgumentException("Falta la columna esperada en posición " + i +
+                            ": '" + cabecera.get(i) + "'");
+                }
+                cabeceraAux.add(cell.getStringCellValue().trim());
+            }
+
+            //validando igualdad exacta
+            if(!cabecera.equals(cabeceraAux)){
+                throw new IllegalArgumentException("Las cabeceras no coinciden.\n" +
+                        "Esperado: " + cabecera + "\nEncontrado: " + cabeceraAux);
+            }
+
+
             List<Registro> buffer = new ArrayList<>(BATCH_SIZE);
 
             while (rows.hasNext()) {
@@ -69,7 +96,7 @@ public class ExcelServiceServiceImpl implements ExcelService {
 
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al procesar el Excel: " + e.getMessage());
+            throw new RuntimeException("Error al procesar el Excel: " + e);
         }
 
 
