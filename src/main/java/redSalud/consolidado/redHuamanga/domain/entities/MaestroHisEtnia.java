@@ -13,9 +13,7 @@ import lombok.NoArgsConstructor;
 public class MaestroHisEtnia {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    @Column(name = "Id_Etnia",nullable = false,length = 3,unique = true)
-    private String idEtnia;
+     private Integer idEtnia;
     @Column(name = "Descripcion_Etnia",nullable = false,length = 30)
     private String DescripcionEtnia;
 

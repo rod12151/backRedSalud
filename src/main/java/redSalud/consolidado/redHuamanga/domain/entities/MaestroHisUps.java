@@ -6,16 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Maestro_His_Profesion")
+@Table(name = "Maestro_His_Ups")
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MaestroHisProfesion {
+public class MaestroHisUps {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String idProfesion;
-    @Column(nullable = false,length = 3)
-    private String idColegio;
-    @Column(nullable = false,length = 100,unique = true)
-    private String descripcionProfesion;
+    private Integer id;
+    private Integer idUps;
+    private String descripcionUps;
+
 }

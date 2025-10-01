@@ -14,7 +14,8 @@ public class MaestroFinanciador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idFinanciador;
-    @Column(name = "descripcion_financiador",nullable = false,length = 40)
 
+    @Column(name = "descripcion_financiador"
+            ,nullable = false,length = 40)
     private String descripcionFinanciador;
 }

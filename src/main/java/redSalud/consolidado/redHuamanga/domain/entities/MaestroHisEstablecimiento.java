@@ -19,5 +19,21 @@ public class MaestroHisEstablecimiento {
     @Column(name = "Nombre_Establecimiento",nullable = false,length = 50)
     private String nombreEstablecimiento;
 
+    private String ubigeoEstablecimiento;
+    private String codigoDisa;
+    private String Disa;
+    private String codigoRed;
+    private String red;
+    private String codigoMicroRed;
+    private String MicroRed;
+    private String codigoUnico;
+    private String codigoSector;
+    private String descripcionsector;
+    private String departamento;
+    private String provincia;
+    private String distrito;
+
+
+
 
 }
