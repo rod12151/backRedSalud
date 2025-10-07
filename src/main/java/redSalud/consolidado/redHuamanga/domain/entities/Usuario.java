@@ -13,9 +13,8 @@ import redSalud.consolidado.redHuamanga.domain.entities.Puesto;
 import redSalud.consolidado.redHuamanga.domain.entities.Rol;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "usuarios")
@@ -28,13 +27,13 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,length =8 )
+    @Column(nullable = true,unique = true,length =8 )
     private String dni;
 
     @Column(name = "nombre",nullable = false,length = 20)
     private String name;
 
-    @Column(name = "apellidos",nullable = false,length = 40)
+    @Column(name = "apellidos",nullable = true,length = 40)
     private String lastName;
 
     @Column(nullable = false, unique = true)
@@ -43,11 +42,11 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private String password; // Encriptada (BCrypt)
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String email;
 
     @ManyToOne
-    @JoinColumn(name = "puesto_id", nullable = false)
+    @JoinColumn(name = "puesto_id", nullable = true)
     private Puesto puesto;
   @Column(nullable = false)
   private Boolean activo = true;
@@ -73,11 +72,13 @@ public class Usuario implements UserDetails {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "rol_id")
     )
-    private Set<Rol> roles;
+    private Set<Rol> roles=new HashSet<>();
+
   @PrePersist
   protected void onCreate() {
     fechaCreacion = LocalDateTime.now();
     fechaActualizacion = LocalDateTime.now();
+
 
   }
 
@@ -85,10 +86,14 @@ public class Usuario implements UserDetails {
     private Set<AccesoRecurso> accesos;
 
   // Implementación de UserDetails
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(new SimpleGrantedAuthority(roles.toString()));
-  }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return getRoles()
+                .stream()
+                .map(r -> new SimpleGrantedAuthority(r.getNombre().toString()))
+                .collect(Collectors.toList());
+    }
   @Override
   public String getPassword() {
     return password;

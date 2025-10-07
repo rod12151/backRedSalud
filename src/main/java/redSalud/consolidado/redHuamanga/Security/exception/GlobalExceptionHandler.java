@@ -19,11 +19,13 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleValidationExceptions(
           MethodArgumentNotValidException ex
   ) {
-    Map<String, String> errors = new HashMap<>();
-    ex.getBindingResult().getAllErrors().forEach(error -> {
+      String cause = (ex.getCause() != null) ? ex.getCause().toString() : "Sin causa";
+      Map<String, String> errors = new HashMap<>();
+      ex.getBindingResult().getAllErrors().forEach(error -> {
       String fieldName = ((FieldError) error).getField();
       String errorMessage = error.getDefaultMessage();
       errors.put(fieldName, errorMessage);
+      errors.put("cause", cause);
     });
 
     ErrorResponse errorResponse = ErrorResponse.builder()
@@ -63,11 +65,17 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(RuntimeException.class)
   public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+      Map<String, String> details = new HashMap<>();
+      details.put("message", ex.getMessage());
+      details.put("timestamp", LocalDateTime.now().toString());
+      details.put("",ex.getCause().toString());
     ErrorResponse errorResponse = ErrorResponse.builder()
             .timestamp(LocalDateTime.now())
             .status(HttpStatus.BAD_REQUEST.value())
             .error("Bad Request")
             .message(ex.getMessage())
+            .details(details)
+
             .build();
 
     return ResponseEntity.badRequest().body(errorResponse);
@@ -75,14 +83,35 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
+      Map<String, String> details = new HashMap<>();
+      details.put("message", ex.getMessage());
+      details.put("timestamp", LocalDateTime.now().toString());
+      details.put("",ex.getCause().toString());
     ErrorResponse errorResponse = ErrorResponse.builder()
             .timestamp(LocalDateTime.now())
             .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
             .error("Internal Server Error")
             .message("Ha ocurrido un error interno en el servidor")
+            .details(details)
             .build();
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> nullException(Exception ex) {
+        Map<String, String> details = new HashMap<>();
+        details.put("message", ex.getMessage());
+        details.put("timestamp", LocalDateTime.now().toString());
+        details.put("",ex.getCause().toString());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("null exception")
+                .message("Ha f no ams chato")
+                .details(details)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
 
 }

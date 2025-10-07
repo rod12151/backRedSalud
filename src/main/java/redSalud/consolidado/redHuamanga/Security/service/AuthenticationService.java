@@ -10,8 +10,13 @@ import redSalud.consolidado.redHuamanga.Security.dto.AuthenticationRequest;
 import redSalud.consolidado.redHuamanga.Security.dto.AuthenticationResponse;
 import redSalud.consolidado.redHuamanga.Security.dto.RefreshTokenRequest;
 import redSalud.consolidado.redHuamanga.Security.dto.RegisterRequest;
+import redSalud.consolidado.redHuamanga.domain.entities.Rol;
 import redSalud.consolidado.redHuamanga.domain.entities.Usuario;
+import redSalud.consolidado.redHuamanga.domain.repositories.RolRepository;
 import redSalud.consolidado.redHuamanga.domain.repositories.UsuarioRepository;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -21,18 +26,21 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
   private final RefreshTokenService refreshTokenService;
+  private final RolRepository rolRepository;
 
     @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
         // Validar que el usuario no exista
-        if (usuarioRepository.findByUsername(request.getEmail()).isPresent()) {
+        if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("El email ya está registrado");
         }
+        Rol rol = rolRepository.findByNombre(request.getRol()).orElseThrow(()-> new RuntimeException("El rol no existe"));
+
 
         // Crear nuevo usuario
         Usuario usuario = Usuario.builder()
                 .name(request.getNombre())
-                .username(request.getEmail())
+                .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .activo(true)
                 .build();
@@ -56,17 +64,18 @@ public class AuthenticationService {
 
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
-        // Autenticar usuario
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+              // Autenticar usuario
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUsername(),
                         request.getPassword()
                 )
         );
 
         // Buscar usuario
-        Usuario usuario = usuarioRepository.findByUsername(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
 
         // Generar tokens
         String accessToken = jwtService.generateAccessToken(usuario);

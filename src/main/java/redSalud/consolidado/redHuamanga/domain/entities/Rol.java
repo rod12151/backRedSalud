@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import redSalud.consolidado.redHuamanga.util.enums.Role;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,5 +24,5 @@ public class Rol {
 
 
     @ManyToMany(mappedBy = "roles")
-    private Set<Usuario> usuarios;
+    private Set<Usuario> usuarios=new HashSet<>();
 }

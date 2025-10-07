@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import redSalud.consolidado.redHuamanga.domain.entities.Usuario;
 import redSalud.consolidado.redHuamanga.domain.repositories.UsuarioRepository;
 
 @Service
@@ -14,7 +15,9 @@ public class CustomerUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return usuarioRepository.findByUsername(email)
+        Usuario usuario= usuarioRepository.findByUsername(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + email));
+        usuario.getRoles().size();
+        return usuario;
     }
 }
