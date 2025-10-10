@@ -10,6 +10,9 @@ import redSalud.consolidado.redHuamanga.Security.dto.AuthenticationRequest;
 import redSalud.consolidado.redHuamanga.Security.dto.AuthenticationResponse;
 import redSalud.consolidado.redHuamanga.Security.dto.RefreshTokenRequest;
 import redSalud.consolidado.redHuamanga.Security.dto.RegisterRequest;
+import redSalud.consolidado.redHuamanga.Security.exception.InvalidTokenFormatException;
+import redSalud.consolidado.redHuamanga.Security.exception.UsuarioDuplicado;
+import redSalud.consolidado.redHuamanga.Security.exception.UsuarioNoExiste;
 import redSalud.consolidado.redHuamanga.domain.entities.Rol;
 import redSalud.consolidado.redHuamanga.domain.entities.Usuario;
 import redSalud.consolidado.redHuamanga.domain.repositories.RolRepository;
@@ -32,10 +35,11 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
         // Validar que el usuario no exista
         if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new UsuarioDuplicado(request.getUsername());
         }
-        Rol rol = rolRepository.findByNombre(request.getRol()).orElseThrow(()-> new RuntimeException("El rol no existe"));
-
+       Rol rol = rolRepository.findByNombre(request.getRol()).orElseThrow(()-> new RuntimeException("El rol no existe"));
+        Set<Rol> roles = new HashSet<>();
+        roles.add(rol);
 
         // Crear nuevo usuario
         Usuario usuario = Usuario.builder()
@@ -45,7 +49,10 @@ public class AuthenticationService {
                 .activo(true)
                 .build();
 
+        usuario.setRoles(roles);
+
         usuarioRepository.save(usuario);
+
 
         // Generar tokens
         String accessToken = jwtService.generateAccessToken(usuario);
@@ -65,7 +72,7 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new UsuarioNoExiste(request.getUsername()));
               // Autenticar usuario
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -96,26 +103,42 @@ public class AuthenticationService {
     @Transactional
     public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
+        if (refreshToken == null || refreshToken.trim().isEmpty()) {
+            throw new InvalidTokenFormatException("El token de actualización es obligatorio");
+        }
+        if (refreshToken.split("\\.").length != 3) {
+            throw new InvalidTokenFormatException("Formato de token inválido");
+        }
+
 
         // Extraer email del token
-        String username = jwtService.extractUsername(refreshToken);
+        String username ;
 
-        if (username == null) {
-            throw new RuntimeException("Token inválido");
+        try {
+            //  Intentar extraer el usuario del token
+            username = jwtService.extractUsername(refreshToken);
+        } catch (Exception e) {
+            // Si el token no se puede decodificar o no es válido
+            throw new InvalidTokenFormatException("Token malformado o inválido");
+        }
+
+        // Verificar que el token contenga un usuario válido
+        if (username == null || username.isEmpty()) {
+            throw new InvalidTokenFormatException("Token inválido: no contiene usuario");
         }
 
         // Buscar usuario
         Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new InvalidTokenFormatException("Usuario no encontrado"));
 
         // Validar refresh token
         if (!jwtService.isTokenValid(refreshToken, usuario)) {
-            throw new RuntimeException("Token inválido o expirado");
+            throw new InvalidTokenFormatException("Token inválido o expirado ");
         }
 
         // Validar que el refresh token existe y está activo
         if (!refreshTokenService.isRefreshTokenValid(usuario, refreshToken)) {
-            throw new RuntimeException("Refresh token revocado o inválido");
+            throw new InvalidTokenFormatException("Refresh token revocado o inválido");
         }
 
         // Generar nuevo access token

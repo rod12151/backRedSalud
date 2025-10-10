@@ -1,5 +1,6 @@
 package redSalud.consolidado.redHuamanga.Security.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
   @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -63,20 +65,25 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
   }
 
-  @ExceptionHandler(RuntimeException.class)
-  public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+  @ExceptionHandler(UsuarioNoExiste.class)
+  public ResponseEntity<ErrorResponse> UsuarioNoExiste(RuntimeException ex) {
       Map<String, String> details = new HashMap<>();
       details.put("message", ex.getMessage());
       details.put("timestamp", LocalDateTime.now().toString());
-      details.put("",ex.getCause().toString());
+      if (ex.getCause() != null) {
+          details.put("cause", ex.getCause().toString());
+      } else {
+          details.put("cause", "No tienes Autorizacion");
+      }
     ErrorResponse errorResponse = ErrorResponse.builder()
             .timestamp(LocalDateTime.now())
-            .status(HttpStatus.BAD_REQUEST.value())
+            .status(HttpStatus.UNAUTHORIZED.value())
             .error("Bad Request")
             .message(ex.getMessage())
             .details(details)
 
             .build();
+     log.error("e: ", ex);
 
     return ResponseEntity.badRequest().body(errorResponse);
   }
@@ -97,21 +104,42 @@ public class GlobalExceptionHandler {
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
   }
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ErrorResponse> nullException(Exception ex) {
+    @ExceptionHandler(UsuarioDuplicado.class)
+    public ResponseEntity<ErrorResponse> UsuarioDuplicado(Exception ex) {
         Map<String, String> details = new HashMap<>();
         details.put("message", ex.getMessage());
         details.put("timestamp", LocalDateTime.now().toString());
-        details.put("",ex.getCause().toString());
+        if (ex.getCause() != null) {
+            details.put("cause", ex.getCause().toString());
+        } else {
+            details.put("cause", "usuario duplicado");
+        }
+
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                .error("null exception")
-                .message("Ha f no ams chato")
+                .status(HttpStatus.CONFLICT.value())
+                .error("usuario duplicado")
+                .message("el usuario ya existe")
                 .details(details)
                 .build();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(InvalidTokenFormatException.class)
+    public ResponseEntity<ErrorResponse> ErrorDeToken(InvalidTokenFormatException ex) {
+      Map<String, String> details = new HashMap<>();
+      details.put("message", ex.getMessage());
+        ErrorResponse errorResponse = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error("sin credenciales")
+                .message(ex.getMessage())
+                .details(details)
+
+                .build();
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
 }

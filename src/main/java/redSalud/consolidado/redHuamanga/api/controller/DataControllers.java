@@ -81,4 +81,10 @@ public class DataControllers {
 
         return registroService.getGraficoCursoVida(red, anioInt, mes, microRed, ipress);
     }
+    @GetMapping("/prueba")
+    public String prueba(){
+        return "prueba";
+    }
+
+
 }
