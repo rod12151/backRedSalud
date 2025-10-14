@@ -65,7 +65,8 @@ public class AuthenticationService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
-                .expiresIn(3600L) // 1 hora en segundos
+                .expiresIn(3600L)
+                .username(usuario.getUsername())// 1 hora en segundos
                 .build();
     }
 
@@ -149,6 +150,8 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
                 .expiresIn(3600L)
+                .username(username)
+
                 .build();
     }
 

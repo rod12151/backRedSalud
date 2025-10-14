@@ -55,10 +55,19 @@ public class JwtService {
             UserDetails userDetails,
             long expiration
     ) {
-
+        
+        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+        boolean isSuperadmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("SUPERADMIN"));
+        boolean isAdmin = authorities.stream().anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        boolean isUser = authorities.stream().anyMatch(a -> a.getAuthority().equals("USER"));
+        boolean isInvited = authorities.stream().anyMatch(a -> a.getAuthority().equals("INVITED"));
         return Jwts
                 .builder()
                 .claims(extraClaims)
+                .claim("SUPERADMIN", isSuperadmin)
+                .claim("ADMIN", isAdmin)
+                .claim("USER", isUser)
+                .claim("INVITED", isInvited)
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiration))
