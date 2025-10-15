@@ -10,7 +10,9 @@ import redSalud.consolidado.redHuamanga.domain.entities.Registro;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.ExcelService;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.RegistroService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -82,8 +84,10 @@ public class DataControllers {
         return registroService.getGraficoCursoVida(red, anioInt, mes, microRed, ipress);
     }
     @GetMapping("/prueba")
-    public String prueba(){
-        return "prueba";
+    public ResponseEntity<Map<String, String>> getPrueba() {
+        Map<String, String> response = new HashMap<>();
+        response.put("mensaje", "prueba");
+        return ResponseEntity.ok(response);
     }
 
 

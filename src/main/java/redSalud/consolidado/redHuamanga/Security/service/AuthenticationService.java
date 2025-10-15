@@ -97,6 +97,7 @@ public class AuthenticationService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .tokenType("Bearer")
+                .username(usuario.getName())
                 .expiresIn(3600L)
                 .build();
     }
