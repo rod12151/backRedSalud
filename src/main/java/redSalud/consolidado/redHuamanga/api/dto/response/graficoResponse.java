@@ -1,4 +1,4 @@
-package redSalud.consolidado.redHuamanga.api.model.response;
+package redSalud.consolidado.redHuamanga.api.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,10 +1,6 @@
 package redSalud.consolidado.redHuamanga.infraestructure.abstractService;
 
 import org.springframework.web.multipart.MultipartFile;
-import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
-import redSalud.consolidado.redHuamanga.domain.entities.Registro;
-
-import java.util.List;
 
 public interface ExcelService {
     void parseExcel(MultipartFile file);

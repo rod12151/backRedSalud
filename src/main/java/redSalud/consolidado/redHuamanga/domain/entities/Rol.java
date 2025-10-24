@@ -1,4 +1,5 @@
 package redSalud.consolidado.redHuamanga.domain.entities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import redSalud.consolidado.redHuamanga.util.enums.Role;
@@ -22,7 +23,7 @@ public class Rol {
     @Enumerated(EnumType.STRING)
     private Role nombre;
 
-
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles")
     private Set<Usuario> usuarios=new HashSet<>();
 }

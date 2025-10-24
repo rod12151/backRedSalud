@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
+import redSalud.consolidado.redHuamanga.api.dto.response.graficoResponse;
 import redSalud.consolidado.redHuamanga.domain.entities.Registro;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.ExcelService;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.RegistroService;
