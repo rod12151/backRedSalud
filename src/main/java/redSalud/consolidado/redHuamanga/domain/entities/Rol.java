@@ -1,17 +1,18 @@
 package redSalud.consolidado.redHuamanga.domain.entities;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import redSalud.consolidado.redHuamanga.util.enums.Role;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@ToString(exclude = "usuarios")
 public class Rol {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,5 +24,5 @@ public class Rol {
 
 
     @ManyToMany(mappedBy = "roles")
-    private Set<Usuario> usuarios;
+    private Set<Usuario> usuarios=new HashSet<>();
 }
