@@ -1,7 +1,7 @@
 package redSalud.consolidado.redHuamanga.infraestructure.abstractService;
 
 import redSalud.consolidado.redHuamanga.domain.entities.Registro;
- import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
+ import redSalud.consolidado.redHuamanga.api.dto.response.graficoResponse;
 import java.util.List;
 
 public interface RegistroService {

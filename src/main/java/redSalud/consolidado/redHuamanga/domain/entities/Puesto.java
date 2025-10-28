@@ -1,5 +1,6 @@
 package redSalud.consolidado.redHuamanga.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +20,7 @@ public class Puesto {
 
     @Column(nullable = false)
     private String nombre;
-
+    @JsonIgnore
     @OneToMany(mappedBy = "puesto")
     private Set<Usuario> usuarios;
 }
