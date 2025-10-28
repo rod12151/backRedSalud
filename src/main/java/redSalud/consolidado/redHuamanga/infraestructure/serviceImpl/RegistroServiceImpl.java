@@ -2,7 +2,7 @@ package redSalud.consolidado.redHuamanga.infraestructure.serviceImpl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
+import redSalud.consolidado.redHuamanga.api.dto.response.graficoResponse;
 import redSalud.consolidado.redHuamanga.domain.entities.Registro;
 import redSalud.consolidado.redHuamanga.domain.repositories.RegistroRepository;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.RegistroService;

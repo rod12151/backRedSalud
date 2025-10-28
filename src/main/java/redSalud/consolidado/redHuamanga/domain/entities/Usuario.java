@@ -1,5 +1,6 @@
 package redSalud.consolidado.redHuamanga.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,21 +48,21 @@ public class Usuario implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "puesto_id", nullable = true)
     private Puesto puesto;
-  @Column(nullable = false)
-  private Boolean activo = true;
+    @Column(nullable = false)
+    private Boolean activo = true;
 
-  @Column(name = "fecha_creacion")
-  private LocalDateTime fechaCreacion;
+    @Column(name = "fecha_creacion")
+    private LocalDateTime fechaCreacion;
 
-  @Column(name = "fecha_actualizacion")
-  private LocalDateTime fechaActualizacion;
-
-
+    @Column(name = "fecha_actualizacion")
+    private LocalDateTime fechaActualizacion;
 
 
 
-  @PreUpdate
-  protected void onUpdate() {
+
+
+    @PreUpdate
+    protected void onUpdate() {
     fechaActualizacion = LocalDateTime.now();
   }
 
@@ -73,53 +74,59 @@ public class Usuario implements UserDetails {
     )
     private Set<Rol> roles=new HashSet<>();
 
-  @PrePersist
-  protected void onCreate() {
+    @PrePersist
+    protected void onCreate() {
     fechaCreacion = LocalDateTime.now();
     fechaActualizacion = LocalDateTime.now();
 
 
   }
-
+    @JsonIgnore
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private Set<AccesoRecurso> accesos;
 
   // Implementación de UserDetails
-
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles()
-                .stream()
-                .map(r -> new SimpleGrantedAuthority(r.getNombre().toString()))
-                .collect(Collectors.toList());
+      return getRoles()
+              .stream()
+              .map(r -> new SimpleGrantedAuthority(r.getNombre().toString()))
+              .collect(Collectors.toList());
     }
-  @Override
-  public String getPassword() {
+    @JsonIgnore
+    @Override
+    public String getPassword() {
     return password;
   }
 
-  @Override
-  public String getUsername() {
+
+    @Override
+    public String getUsername() {
     return username;
   }
 
-  @Override
-  public boolean isAccountNonExpired() {
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
     return true;
   }
 
-  @Override
-  public boolean isAccountNonLocked() {
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
     return true;
   }
 
-  @Override
-  public boolean isCredentialsNonExpired() {
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
     return true;
   }
 
-  @Override
-  public boolean isEnabled() {
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
     return activo;
   }
 

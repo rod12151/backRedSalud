@@ -1,15 +1,11 @@
 package redSalud.consolidado.redHuamanga.infraestructure.serviceImpl;
 
 import lombok.AllArgsConstructor;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import redSalud.consolidado.redHuamanga.api.model.response.graficoResponse;
+import redSalud.consolidado.redHuamanga.api.dto.response.graficoResponse;
 import redSalud.consolidado.redHuamanga.domain.entities.Registro;
 import redSalud.consolidado.redHuamanga.domain.repositories.RegistroRepository;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.ExcelService;
