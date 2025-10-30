@@ -61,12 +61,7 @@ private final String PREFIX_TOKEN = "Bearer ";
             }
             filterChain.doFilter(request, response);
         }catch (JwtException e){
-            Map<String,String> body = new HashMap<>();
-            body.put("error",e.getMessage());
-            body.put("message","El Token Jwt no es valido!");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(body));
-            response.setStatus(403);
-            response.setContentType("application/json");
+            throw new JwtException("El AccessToken no es Valido " + e.getMessage());
         }
 
 

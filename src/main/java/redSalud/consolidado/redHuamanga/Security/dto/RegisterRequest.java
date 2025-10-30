@@ -25,6 +25,9 @@ public class RegisterRequest {
   @NotBlank(message = "La contraseña es obligatoria")
   @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
   private String password;
+  @NotBlank(message = "La el dni es obligatorio")
+    @Size(min = 6, message = "el dni debe tener al 8 caracteres")
+    private String dni;
   @NotNull(message = "El rol es importante")
   private Role rol;
 }

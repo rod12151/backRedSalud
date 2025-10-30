@@ -2,6 +2,7 @@ package redSalud.consolidado.redHuamanga.api.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import redSalud.consolidado.redHuamanga.api.dto.requests.CreateUserRequest;
@@ -30,5 +31,11 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> actualizarUsuario(@Valid @PathVariable String id, @RequestBody CreateUserRequest request) {
         return ResponseEntity.ok(usuarioService.editarUsuario(id,request));
+    }
+    @PutMapping(value = "estado/{id}")
+    public ResponseEntity<Void> changeStatusUsuario(@PathVariable String id){
+        usuarioService.changeEstatusById(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
     }
 }
