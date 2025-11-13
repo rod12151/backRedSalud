@@ -32,7 +32,7 @@ public class PuestoServiceImpl implements PuestoService {
     public Puesto edit(String idPuesto, CreatePuestoRequest entity) {
         Puesto puestoActual =puestoRepository.findById(Integer.valueOf(idPuesto)).orElseThrow(()->new EntityNoExiste(idPuesto,entidad));;
         puestoActual.setCodigo(entity.getCodigo());
-        puestoActual.setNombre(entity.getName());
+        puestoActual.setNombre(entity.getNombre());
          puestoRepository.save(puestoActual);
          return puestoActual;
     }
@@ -41,7 +41,7 @@ public class PuestoServiceImpl implements PuestoService {
     public Puesto add( CreatePuestoRequest entity) {
         Puesto puesto = Puesto.builder()
                 .codigo(entity.getCodigo())
-                .nombre(entity.getName())
+                .nombre(entity.getNombre())
                 .activo(true)
                 .build();
         puestoRepository.save(puesto);

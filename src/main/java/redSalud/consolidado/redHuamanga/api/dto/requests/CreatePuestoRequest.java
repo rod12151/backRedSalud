@@ -13,5 +13,5 @@ public class CreatePuestoRequest {
     @Size(min = 10,max = 10,message = "el codigo debe tener 10 caracteres")
     private String codigo;
     @NotBlank(message = "El Nombre es obligatorio")
-    private String name;
+    private String nombre;
 }
