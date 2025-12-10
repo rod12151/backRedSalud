@@ -12,6 +12,7 @@ import redSalud.consolidado.redHuamanga.domain.repositories.PuestoRepository;
 import redSalud.consolidado.redHuamanga.domain.repositories.RolRepository;
 import redSalud.consolidado.redHuamanga.domain.repositories.UsuarioRepository;
 import redSalud.consolidado.redHuamanga.infraestructure.abstractService.UsuarioService;
+import redSalud.consolidado.redHuamanga.util.exceptions.EntityNoExiste;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,5 +70,15 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
+    }
+
+    @Override
+    public void changeEstatusById(String id) {
+        Usuario usuario = usuarioRepository.findById(Long.valueOf(id)).orElseThrow(()-> new EntityNoExiste(id, "Usuario"));
+        Boolean status=usuario.getActivo();
+        usuario.setActivo(!status);
+        usuarioRepository.save(usuario);
+
+
     }
 }

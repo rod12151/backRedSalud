@@ -13,8 +13,10 @@ import redSalud.consolidado.redHuamanga.Security.dto.RegisterRequest;
 import redSalud.consolidado.redHuamanga.Security.exception.InvalidTokenFormatException;
 import redSalud.consolidado.redHuamanga.Security.exception.UsuarioDuplicado;
 import redSalud.consolidado.redHuamanga.Security.exception.UsuarioNoExiste;
+import redSalud.consolidado.redHuamanga.domain.entities.Puesto;
 import redSalud.consolidado.redHuamanga.domain.entities.Rol;
 import redSalud.consolidado.redHuamanga.domain.entities.Usuario;
+import redSalud.consolidado.redHuamanga.domain.repositories.PuestoRepository;
 import redSalud.consolidado.redHuamanga.domain.repositories.RolRepository;
 import redSalud.consolidado.redHuamanga.domain.repositories.UsuarioRepository;
 
@@ -30,6 +32,7 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
   private final RefreshTokenService refreshTokenService;
   private final RolRepository rolRepository;
+  private final PuestoRepository puestoRepository;
 
     @Transactional
     public AuthenticationResponse register(RegisterRequest request) {
@@ -40,16 +43,18 @@ public class AuthenticationService {
        Rol rol = rolRepository.findByNombre(request.getRol()).orElseThrow(()-> new RuntimeException("El rol no existe"));
         Set<Rol> roles = new HashSet<>();
         roles.add(rol);
-
+        Puesto puesto = puestoRepository.findById(1).orElseThrow();
         // Crear nuevo usuario
         Usuario usuario = Usuario.builder()
                 .name(request.getNombre())
+                .dni(request.getDni())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .activo(true)
                 .build();
 
         usuario.setRoles(roles);
+        usuario.setPuesto(puesto);
 
         usuarioRepository.save(usuario);
 
