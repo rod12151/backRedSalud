@@ -5,6 +5,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import redSalud.consolidado.redHuamanga.util.exceptions.EntityNoExiste;
 
 import java.util.ArrayList;
 
@@ -12,7 +13,6 @@ import java.util.ArrayList;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestController {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-
     public ErrorsResponse badRequest(MethodArgumentNotValidException exception) {
         var errors =new ArrayList<>();
         exception.getAllErrors()
@@ -21,6 +21,14 @@ public class BadRequestController {
                 .errors(errors)
                 .status(HttpStatus.BAD_REQUEST.name())
                 .code(HttpStatus.BAD_REQUEST.value())
+                .build();
+    }
+    @ExceptionHandler(EntityNoExiste.class)
+    public ErrorResponse entityNoExiste(EntityNoExiste exception) {
+        return ErrorResponse.builder()
+                .code(HttpStatus.BAD_REQUEST.value())
+                .status(HttpStatus.BAD_REQUEST.name())
+                .message(exception.getMessage())
                 .build();
     }
 }

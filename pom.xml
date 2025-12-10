@@ -98,12 +98,7 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
-        <!--validators-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-            <version>4.0.0-M3</version>
-        </dependency>
+
 
 	</dependencies>
 

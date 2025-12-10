@@ -91,7 +91,7 @@ public class SecurityConfig {
     CorsConfigurationSource configurationSource(){
         CorsConfiguration config = new CorsConfiguration();
         //config.setAllowedOrigins(List.of("https://taupe-capybara-74e849.netlify.app/"));
-        config.setAllowedOrigins(List.of("http://localhost:4200/"));
+        config.setAllowedOrigins(List.of("http://localhost:4200/",("http://localhost:4000")));
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         config.setExposedHeaders(Arrays.asList("Content-Type", "Authorization","Another-Header"));

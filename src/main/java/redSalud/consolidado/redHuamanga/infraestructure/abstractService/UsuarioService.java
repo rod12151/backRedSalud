@@ -11,4 +11,5 @@ public interface UsuarioService {
     Usuario editarUsuario(String id, CreateUserRequest request);
 
     List<Usuario> listarUsuarios();
+    void changeEstatusById(String id);
 }

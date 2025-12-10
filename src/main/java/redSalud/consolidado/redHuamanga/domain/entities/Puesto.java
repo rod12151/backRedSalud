@@ -2,9 +2,7 @@ package redSalud.consolidado.redHuamanga.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
@@ -12,14 +10,20 @@ import java.util.Set;
 @Table(name = "puestos")
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
+@Builder
 public class Puesto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Column(nullable = false,unique = true,length =10 )
+    private String codigo;
     @Column(nullable = false)
     private String nombre;
+    @Column(nullable = false)
+    private Boolean activo = true;
+
     @JsonIgnore
     @OneToMany(mappedBy = "puesto")
     private Set<Usuario> usuarios;
