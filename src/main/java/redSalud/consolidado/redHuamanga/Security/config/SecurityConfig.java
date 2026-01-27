@@ -93,8 +93,7 @@ public class SecurityConfig {
     @Bean
     CorsConfigurationSource configurationSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("https://sumaqwayra.com"));
-        //config.setAllowedOrigins(List.of("http://localhost:4200/",("http://localhost:4000")));
+        config.setAllowedOrigins(Arrays.asList("https://sumaqwayra.com","https://api.sumaqwayra.com"));
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         config.setExposedHeaders(Arrays.asList("Content-Type", "Authorization","Another-Header"));
